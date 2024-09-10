@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Set compiler flags
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -mavx2 -static -fopenmp") #-fno-sanitize=all -static -ipp=common -qopenmp  -fsanitize=address  -fopenmp
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -mfma -static -fopenmp") #-fno-sanitize=all -static -ipp=common -qopenmp  -fsanitize=address  -fopenmp
 
 # Add the source files for the executable
 
