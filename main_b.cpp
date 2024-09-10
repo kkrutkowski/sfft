@@ -107,7 +107,7 @@ for (unsigned int i = 0; i < file_count; i++) {
 }
 
 std::cout << "\r" << "Complete" << std::endl;
-
+std::cout << "Elapsed time: "  << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - startTime).count()<< " ms" << std::endl;
 printThread.join();
 
 fft.free();
