@@ -71,12 +71,12 @@ struct FFT {
             //fftwf_execute(p);
             //::free(fftgrid);
 
-            for (int i = 0; i < int(2 * size) + 2; i++){fftgrid[i] *= std::sqrt(cosh(float(i) / (4 * ((float(size)) + 1))));}
+            //for (int i = 0; i < int(2 * size) + 2; i++){fftgrid[i] *= std::sqrt(cosh(float(i) / (4 * ((float(size)) + 1))));}
 
         return fftgrid;}
 
         void free(){
-            //fftwf_print_plan(p);
+            fftwf_print_plan(p);
             fftwf_destroy_plan(p);
         }
 
