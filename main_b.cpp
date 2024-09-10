@@ -36,23 +36,33 @@ int main(int argc, char *argv[]){
 
 std::locale::global(std::locale("C"));
 
-bool use_fft = true;
-
 //defines and calculates constants used for calculations
-const std::string files_location = argv[1];
+const std::string files_location = argv[2];
 
-if (argc < 3){return 1;} // || argv[3][0] == '\0' - breaks gui
+std::string argv1 = argv[1];
+
+if (argc < 4){return 1;} // || argv[3][0] == '\0' - breaks gui
+
+uint method = 2;
+
+if (argv1 == "0" || argv1 == "slow"){method = 0; if (argv1 == "0"){argv1 = "slow";}}
+else if (argv1 == "1" || argv1 == "direct" || argv1 == "simd" || argv1 == "fma"){method = 1; if (argv1 == "1" || argv1 == "direct" || argv1 == "simd"){argv1 = "fma";}}
+else if (argv1 == "2" || argv1 == "rec" || argv1 == "recursive"){method = 2; if (argv1 == "2" || argv1 == "rec"){argv1 = "recursive";}}
+else if (argv1 == "3" || argv1 == "nfft3" || argv1 == "nfftls"){method = 3; if (argv1 == "3" || argv1 == "nfftls"){argv1 = "nfft3";}}
+else if (argv1 == "4" || argv1 == "sfft" || argv1 == "sparse"){method = 4; if (argv1 == "4" || argv1 == "sparse"){argv1 = "sfft";}}
+else if (argv1 == "5" || argv1 == "fasper" || argv1 == "fast"){method = 5; if (argv1 == "5" || argv1 == "fast"){argv1 = "fasper";}}
 
 float max_frequency_temp = 10.0;
-if (argc > 2 && ((argv[2][0]) != '\0')){max_frequency_temp = std::stof(argv[2]);}
+if (argc > 3 && ((argv[3][0]) != '\0')){max_frequency_temp = std::stof(argv[3]);}
 const float max_frequency = max_frequency_temp; //0
 
 int terms = 1;
-if (argc > 3 && ((argv[3][0]) != '\0')){terms = std::stoi(argv[3]);}
+if (argc > 4 && ((argv[4][0]) != '\0')){terms = std::stoi(argv[4]);}
 
 FFTGrid grid; grid.generate(max_frequency, int(12 + std::ceil(std::log2(terms * max_frequency))));
 
 std::cout << "\n" "Directory location: " << files_location << "\n";
+std::cout << "Method: " << argv1 << "\n";
 std::cout << "Min frequency: " << 0.0f << "\n";
 std::cout << "Max frequency: " << max_frequency << "\n";
 std::cout << "Step size: " << grid.fstep << "\n";
@@ -66,7 +76,7 @@ std::cout << "Number of steps: " << no_steps << "\n";
 
 //creates files array
 std::vector<std::string> files;
-auto directory_iterator = std::filesystem::directory_iterator(argv[1]);
+auto directory_iterator = std::filesystem::directory_iterator(files_location);
 unsigned int file_count = 0;
 for (auto& entry : directory_iterator)
 {files.push_back(entry.path());++file_count;}
@@ -81,7 +91,7 @@ std::thread printThread;
         printProgress(file_count, startTime);
     });
 
-std::filesystem::path path = std::filesystem::path(files_location).parent_path(); std::string output_path = path.string() + "/kuiper_output.tsv";
+std::filesystem::path path = std::filesystem::path(files_location).parent_path(); std::string output_path = path.string() + "/rayleigh_output.tsv";
 std::ofstream output_file(output_path);
  output_file.close(); //creates and closes output file
 
