@@ -6,9 +6,9 @@
 #include <cmath>
 
 #include "periodograms/rayleigh_slow_b.hpp"
+#include "periodograms/rayleigh_simd_b.hpp"
 #include "periodograms/rayleigh_fft_b.hpp"
 
-#include "utils/grid.hpp"
 #include "utils/readout.hpp"
 
 std::tuple<float, float, float> periodogram(FFTGrid &grid, std::filesystem::path in_file, FFT &fft, int &threadID, uint method){
@@ -17,6 +17,7 @@ std::tuple<float, float, float> periodogram(FFTGrid &grid, std::filesystem::path
 	output_data best_frequency;
 
 	if (method == 0){best_frequency = rayleigh_slow_b(data, grid, fft, threadID);}
+	else if (method == 1){best_frequency = rayleigh_simd_b(data, grid, fft, threadID);}
 	else if (method == 4){best_frequency = rayleigh_fft_b(data, grid, fft, threadID);} //binned conditional nonuniformity, requires fixing weighting function
 	else {std::cout << "Invalid method selected" << std::endl;}
 
