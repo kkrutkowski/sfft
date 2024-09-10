@@ -48,9 +48,8 @@ uint method = 2;
 if (argv1 == "0" || argv1 == "slow"){method = 0; if (argv1 == "0"){argv1 = "slow";}}
 else if (argv1 == "1" || argv1 == "direct" || argv1 == "simd" || argv1 == "fma"){method = 1; if (argv1 == "1" || argv1 == "direct" || argv1 == "simd"){argv1 = "fma";}}
 else if (argv1 == "2" || argv1 == "rec" || argv1 == "recursive"){method = 2; if (argv1 == "2" || argv1 == "rec"){argv1 = "recursive";}}
-else if (argv1 == "3" || argv1 == "nfft3" || argv1 == "nfftls"){method = 3; if (argv1 == "3" || argv1 == "nfftls"){argv1 = "nfft3";}}
-else if (argv1 == "4" || argv1 == "sfft" || argv1 == "sparse"){method = 4; if (argv1 == "4" || argv1 == "sparse"){argv1 = "sfft";}}
-else if (argv1 == "5" || argv1 == "fasper" || argv1 == "fast"){method = 5; if (argv1 == "5" || argv1 == "fast"){argv1 = "fasper";}}
+else if (argv1 == "3" || argv1 == "sfft" || argv1 == "sparse"){method = 3; if (argv1 == "3" || argv1 == "sparse"){argv1 = "sfft";}}
+else if (argv1 == "4" || argv1 == "fasper" || argv1 == "fast"){method = 4; if (argv1 == "4" || argv1 == "fast"){argv1 = "fasper";}}
 
 float max_frequency_temp = 10.0;
 if (argc > 3 && ((argv[3][0]) != '\0')){max_frequency_temp = std::stof(argv[3]);}

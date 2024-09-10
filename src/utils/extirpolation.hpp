@@ -16,7 +16,7 @@ double factorial(int n) {
     return result;
 }
 
-float* extirpolate(double *x, double *y, int size, int &N) {  // O(M) complexity
+float* extirpolate(double *x, float *y, int size, int &N) {  // O(M) complexity
     const int M = 5;
     double max_x = 0;
 
@@ -29,7 +29,7 @@ float* extirpolate(double *x, double *y, int size, int &N) {  // O(M) complexity
 
     //std::cout << N << std::endl;
 
-    float*  result  =  (float*) calloc(2 * N, sizeof(double));
+    float*  result  =  (float*) calloc(2 * N, sizeof(float));
     int integers = 0;
     bool* IsInteger = (bool*)calloc(size, sizeof(bool));
     for (int i = 0; i < size; i++){if (x[i] == double(int(x[i]))){integers += 1; result[2*i] = y[i]; IsInteger[i] = 1;}} //else { if (IsInteger[i] == 1){integers -= 1;  IsInteger[i] = 0;}}}

@@ -1,11 +1,12 @@
 #ifndef FFTGRID_HPP
 #define FFTGRID_HPP
 
-//#include "/opt/intel/oneapi/2024.1/include/ipp/ipps.h"
 #include <vector>
 #include <iostream>
 #include <cmath>
 #include <fftw3.h>
+
+#include "extirpolation.hpp"
 
 
 struct FFT {
@@ -17,9 +18,8 @@ struct FFT {
 
     fftwf_plan p;
 
-    //FFT() : cosh_tab {0.30250242, 0.32175471, 0.17278529, 1.96204223, 0.00298915, 0.99996111} {}
-//
     // Member function to initialize the FFT struct
+
     void init(int order_loc) {
 
         order = order_loc;
@@ -27,16 +27,6 @@ struct FFT {
         p = fftwf_plan_dft_r2c_1d(2 * size, arr, reinterpret_cast<fftwf_complex*>(arr), FFTW_ESTIMATE);
     }
 
-    /*
-        float cosh(float x){  // computes approximate cosh(2x) for x between 0 and 1
-            float result = cosh_tab[5];
-            float temp = 1;
-            for (int i=1; i <6 ; i++){
-                temp *= x;
-                result += temp * cosh_tab[6-i];
-            }
-        return result;}
-        */
 
         // Member function to calculate nonuniform to uniform FFT
         float* NDFT_I(float *x, float *y, int n, double df, int &threadID, float FreqFactor = 1, float TrimFactor = 1.0){
@@ -55,8 +45,7 @@ struct FFT {
                 fftgrid[(int(tmp) + 1) % (2 * size)] += y[i] * (tmp - float(int(tmp)));
             }
 
-
-
+            /*
             if (threadID == -1) {
                 #pragma omp critical
                 {
@@ -68,6 +57,7 @@ struct FFT {
                     // FFTW_MEASURE ~ 4.0 s + 50s evalutaion (?)
                 }
             }
+            */
 
             ::free(xnorm);
             fftwf_execute_dft_r2c(p, fftgrid, reinterpret_cast<fftwf_complex*>(fftgrid));
@@ -77,6 +67,28 @@ struct FFT {
             //for (int i = 0; i < int(2 * size) + 2; i++){fftgrid[i] *= std::sqrt(cosh(float(i) / (4 * ((float(size)) + 1))));}
 
         return fftgrid;}
+
+
+        // Member function to calculate nonuniform to uniform FFT
+        float* NDFT_I_fasper(float *x, float *y, int n, double df, int &threadID, double FreqFactor = 1){
+
+            df *= 2.0 * FreqFactor;
+            double xmin=0;
+            double* xnorm = new double[n];
+
+            for (int i = 0; i < n; i++) {xnorm[i] = (x[i] - x[0]) * df;}
+            for (int i = 0; i < n; i++) {xnorm[i] = (xnorm[i] - double(int(xnorm[i]))) * double(size);}
+            //std::cout << n << " | " << size << std::endl;
+            float* result = extirpolate(xnorm, y, n, size);
+            //for (int i = 0; i < 2 * size; i+=2) {std::cout << result[i] << ", " << std::flush;}
+
+            //ippsFFTInv_CToC_32fc_I(, pSpec, pMemBuffer);
+            fftwf_execute_dft(p, reinterpret_cast<fftwf_complex*>(result), reinterpret_cast<fftwf_complex*>(result));
+            //for (int i = 0; i < 2 * size; i+=2) {std::cout << result[i] * result[i] + result[i+1] * result[i+1] << " " << std::flush;}
+            delete[] xnorm;
+
+        return result;}
+
 
         void free(){
             //fftwf_print_plan(p);
