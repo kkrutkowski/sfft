@@ -105,7 +105,7 @@ int threadID = -1;
 
 #pragma omp parallel for private(threadID)
 for (unsigned int i = 0; i < file_count; i++) {
-    auto [frequency, amplitude, max_power] = periodogram(grid, files[i], terms, fft, threadID, method);
+    auto [frequency, amplitude, max_power] = periodogram(grid, files[i], fft, threadID, method);
 
         #pragma omp critical
         {// Enter critical section to write to the file
