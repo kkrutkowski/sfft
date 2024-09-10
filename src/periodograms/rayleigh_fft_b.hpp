@@ -2,7 +2,6 @@
 #include <cstring>
 
 #include "../utils/vertex.hpp"
-#include "../utils/periodograms.hpp"
 #include "../utils/fftgrid.hpp"
 #include "../utils/readout.hpp"
 //#include "utils/convolution.hpp"

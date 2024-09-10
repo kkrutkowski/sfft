@@ -2,7 +2,6 @@
 #include <cstring>
 
 #include "../utils/vertex.hpp"
-#include "../utils/periodograms.hpp"
 #include "../utils/fftgrid.hpp"
 #include "../utils/readout.hpp"
 //#include "utils/convolution.hpp"
@@ -41,15 +40,6 @@ output_data rayleigh_slow_b(const star &data, const FFTGrid &grid, FFT &fft, int
       wy[i] *= w[i];                /* attach weights */
       norm += wy[i] * wy[i];
    }
-
-   //norm /= float(n);
-
-   //std::cout << n << std::endl;
-   /*
-   float* CS= fft.NDFT_I(t, wy, n, grid.fstep, threadID, float(i));
-   for (k=0; k< int(grid.freq.size() - 1); ++k) {powers[k] += float((CS[2*k] * CS[2*k]) + (CS[(2*k) + 1] * CS[(2*k) + 1])) / norm;} // Calibrate 'Z' value in Rayleigh's Z-test'
-   free(CS);
-   */
 
    for (k=1; k<grid.freq.size(); ++k){
       float C = 0;
