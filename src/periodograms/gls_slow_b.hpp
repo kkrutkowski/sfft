@@ -11,13 +11,14 @@ output_data gls_slow_b(const star &data, const FFTGrid &grid, FFT &fft) {
 
    int n = data.x.size();
 
-   float wsum=0, wsum_inv=0, Y=0, norm = 0;
+   float wsum=0, wsum_inv=0, Y=0;
    float *t = (float *) malloc(n * sizeof(float)), //single precision float representation of time
           *w = (float *) malloc(n * sizeof(float)),
           *wy = (float *) malloc(n * sizeof(float));
 
    float max_power = 0;
-   int i = 0; int k = 0;
+   uint i = 0; uint k = 0;
+   float YY = 0;
 
    for (i=0; i<n; ++i) {
       /* weights */
@@ -37,19 +38,37 @@ output_data gls_slow_b(const star &data, const FFTGrid &grid, FFT &fft) {
    for (i=0; i<n; ++i) {
       /* variance */
       wy[i] = data.y[i] - Y;             /* Subtract weighted mean */
+      YY += w[i] * wy[i] * wy[i];
       wy[i] *= w[i];                /* attach weights */
-      norm += wy[i] * wy[i];
    }
 
    for (k=1; k<grid.freq.size(); ++k){
       float C = 0;
       float S = 0;
+      float YC = 0;
+      float YS = 0;
+      float CC = 0;
+      float CS = 0;
+      float SS = 0;
+      float D = 0;
       float power;
       for (i=0; i<n; ++i) {
-         C += wy[i] * cos(2 * M_PI * grid.freq[k] * t[i]);
-         S += wy[i] * sin(2 * M_PI * grid.freq[k] * t[i]);
+         float cosx = cos(2 * M_PI * grid.freq[k] * t[i]);
+         float sinx = sin(2 * M_PI * grid.freq[k] * t[i]);
+         C += w[i] * cosx;
+         S += w[i] * sinx;
+         YC += wy[i] * cosx;
+         YS += wy[i] * sinx;
+         CC += w[i] * cosx * cosx;   /* Eq. (13) */
+         CS += w[i] * cosx * sinx;   /* Eq. (15) */
       }
-         power = ((C*C) + (S*S)) / norm;
+
+         SS = 1. - CC;
+         CC -= C * C;
+         SS -= S * S;
+         CS -= C * S;
+         D = CC*SS - CS*CS;
+         power = (SS*YC*YC + CC*YS*YS - 2.*CS*YC*YS) / (YY*D);
 
          if (power > best_frequency.power)
                {

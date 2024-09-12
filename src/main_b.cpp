@@ -43,14 +43,17 @@ const std::string files_location = argv[3];
 std::string argv1 = argv[1];
 std::string argv2 = argv[2];
 
-uint method = 2;
+uint method = 0;
 uint algorithm = 1;
 
-if (argv1 == "0" || argv1 == "slow"){method = 0; if (argv1 == "0"){argv1 = "slow";}}
-else if (argv1 == "1" || argv1 == "direct" || argv1 == "simd" || argv1 == "fma"){method = 1; if (argv1 == "1" || argv1 == "direct" || argv1 == "simd"){argv1 = "fma";}}
-else if (argv1 == "2" || argv1 == "rec" || argv1 == "recursive"){method = 2; if (argv1 == "2" || argv1 == "rec"){argv1 = "recursive";}}
-else if (argv1 == "3" || argv1 == "sfft" || argv1 == "sparse"){method = 3; if (argv1 == "3" || argv1 == "sparse"){argv1 = "sfft";}}
-else if (argv1 == "4" || argv1 == "fasper" || argv1 == "fast"){method = 4; if (argv1 == "4" || argv1 == "fast"){argv1 = "fasper";}}
+if (argv1 == "0" || argv1 == "slow"){method = 0; argv1 = "slow";}
+else if (argv1 == "1" || argv1 == "direct" || argv1 == "simd" || argv1 == "fma"){method = 1; argv1 = "fma";}
+else if (argv1 == "2" || argv1 == "rec" || argv1 == "recursive"){method = 2; argv1 = "recursive";}
+else if (argv1 == "3" || argv1 == "sfft" || argv1 == "sparse"){method = 3; argv1 = "sfft";}
+else if (argv1 == "4" || argv1 == "fasper" || argv1 == "fast"){method = 4; argv1 = "fasper";}
+
+if (argv2 == "0" || argv2 == "rz" || argv2 == "rzt" || argv1 == "rayleigh"){algorithm = 0; argv2 = "Rayleigh's Z-test";}
+else if (argv2 == "1" || argv2 == "ls" || argv2 == "gls" || argv1 == "generalized"){algorithm = 1; argv2 = "Generalized Lomb-Scargle Periodogram";}
 
 float max_frequency_temp = 10.0;
 if (argc > 4 && ((argv[4][0]) != '\0')){max_frequency_temp = std::stof(argv[4]);}
@@ -62,6 +65,7 @@ if (argc > 5 && ((argv[5][0]) != '\0')){resolution = std::stod(argv[5]);}
 FFTGrid grid; grid.generate(max_frequency, uint(std::exp2(resolution)), method);
 
 std::cout << "\n" "Directory location: " << files_location << "\n";
+std::cout << "Algorithm: " << argv2 << "\n";
 std::cout << "Method: " << argv1 << "\n";
 std::cout << "Min frequency: " << 0.0f << "\n";
 std::cout << "Max frequency: " << max_frequency << "\n";
@@ -103,7 +107,7 @@ fft.init(grid.size);
 
 #pragma omp parallel for
 for (unsigned int i = 0; i < file_count; i++) {
-    auto [frequency, amplitude, max_power] = periodogram(grid, files[i], fft, method);
+    auto [frequency, amplitude, max_power] = periodogram(grid, files[i], fft, algorithm, method);
 
         #pragma omp critical
         {// Enter critical section to write to the file
