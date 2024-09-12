@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Set compiler flags
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -mfma -static -fopenmp -fno-sanitize=all")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -mfma -static -fopenmp -fno-sanitize=all") # -fsanitize=address -fnosanitize=all
 # Add the source files for the executable
 
 add_executable(sfft_demo src/main_b.cpp)

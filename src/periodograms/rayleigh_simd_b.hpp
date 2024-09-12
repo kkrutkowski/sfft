@@ -8,7 +8,7 @@
 #include "../../include/mintrig.hpp"
 //#include "utils/convolution.hpp"
 
-output_data rayleigh_simd_b(const star &data, const FFTGrid &grid, FFT &fft, int &threadID) {
+output_data rayleigh_simd_b(const star &data, const FFTGrid &grid, FFT &fft) {
         output_data best_frequency;
 
    int n = data.x.size();

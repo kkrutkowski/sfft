@@ -1,13 +1,12 @@
 #include <cmath>
 #include <cstring>
-#include <iostream>
 
 #include "../utils/vertex.hpp"
 #include "../utils/fftgrid.hpp"
 #include "../utils/readout.hpp"
 //#include "utils/convolution.hpp"
 
-output_data rayleigh_fft_b(const star &data, const FFTGrid &grid, FFT &fft) {
+output_data gls_slow_b(const star &data, const FFTGrid &grid, FFT &fft) {
         output_data best_frequency;
 
    int n = data.x.size();
@@ -42,21 +41,22 @@ output_data rayleigh_fft_b(const star &data, const FFTGrid &grid, FFT &fft) {
       norm += wy[i] * wy[i];
    }
 
-   //norm /= float(n);
+   for (k=1; k<grid.freq.size(); ++k){
+      float C = 0;
+      float S = 0;
+      float power;
+      for (i=0; i<n; ++i) {
+         C += wy[i] * cos(2 * M_PI * grid.freq[k] * t[i]);
+         S += wy[i] * sin(2 * M_PI * grid.freq[k] * t[i]);
+      }
+         power = ((C*C) + (S*S)) / norm;
 
-
-   //std::cout << n << std::endl;
-   float* CS= fft.NDFT_I(t, wy, n, grid.fstep, float(1));
-   float power;
-   for (k=1; k< int(grid.freq.size() - 1); ++k) {power = float((CS[2*k] * CS[2*k]) + (CS[(2*k) + 1] * CS[(2*k) + 1])) / norm;
-   if (power > best_frequency.power)
-         {
+         if (power > best_frequency.power)
+               {
                   best_frequency.power = power;
                   best_frequency.frequency = grid.freq[k];
-         }
-   }
-
-   free(CS);
+                     //std::cout << max_power << " " << best_freq << std::endl;
+               }}
 
 free(t); free(w); free(wy);
 return best_frequency;}

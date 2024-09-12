@@ -6,7 +6,7 @@
 #include "../utils/readout.hpp"
 //#include "utils/convolution.hpp"
 
-output_data rayleigh_fasper_b(const star &data, const FFTGrid &grid, FFT &fft, int &threadID) {
+output_data rayleigh_fasper_b(const star &data, const FFTGrid &grid, FFT &fft) {
         output_data best_frequency;
 
    int n = data.x.size();
@@ -45,7 +45,7 @@ output_data rayleigh_fasper_b(const star &data, const FFTGrid &grid, FFT &fft, i
 
 
    //std::cout << n << std::endl;
-   float* CS= fft.NDFT_I_fasper(t, wy, n, grid.fstep, threadID, float(1));
+   float* CS= fft.NDFT_I_fasper(t, wy, n, grid.fstep, float(1));
    float power;
    for (k=1; k< int(grid.freq.size() - 1); ++k) {power = float((CS[2*k] * CS[2*k]) + (CS[(2*k) + 1] * CS[(2*k) + 1])) / norm;
    if (power > best_frequency.power)
