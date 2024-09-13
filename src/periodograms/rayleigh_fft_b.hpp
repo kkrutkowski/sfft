@@ -56,7 +56,5 @@ output_data rayleigh_fft_b(const star &data, const FFTGrid &grid, FFT &fft) {
          }
    }
 
-   free(CS);
-
-free(t); free(w); free(wy);
+free(t); free(w); free(wy); free(CS);
 return best_frequency;}

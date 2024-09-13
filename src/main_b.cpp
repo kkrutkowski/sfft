@@ -49,7 +49,7 @@ uint algorithm = 1;
 if (argv1 == "0" || argv1 == "slow"){method = 0; argv1 = "slow";}
 else if (argv1 == "1" || argv1 == "direct" || argv1 == "simd" || argv1 == "fma"){method = 1; argv1 = "fma";}
 else if (argv1 == "2" || argv1 == "rec" || argv1 == "recursive"){method = 2; argv1 = "recursive";}
-else if (argv1 == "3" || argv1 == "sfft" || argv1 == "sparse"){method = 3; argv1 = "sfft";}
+else if (argv1 == "3" || argv1 == "fft"|| argv1 == "sfft" || argv1 == "sparse"){method = 3; argv1 = "sfft";}
 else if (argv1 == "4" || argv1 == "fasper" || argv1 == "fast"){method = 4; argv1 = "fasper";}
 
 if (argv2 == "0" || argv2 == "rz" || argv2 == "rzt" || argv1 == "rayleigh"){algorithm = 0; argv2 = "Rayleigh's Z-test";}
