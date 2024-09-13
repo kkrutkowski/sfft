@@ -25,8 +25,9 @@ function prepare_tsv() {
         # Use awk to modify the first column (remove directory and extension) and keep tab-separated fields
         awk -F'\t' '{
             split($1, arr, "/");  # split by "/"
-            split(arr[length(arr)], name_ext, ".");  # split the filename from extension
-            $1 = name_ext[1];  # Keep only the filename
+            filename = arr[length(arr)];  # last element is the filename with extension
+            sub(/\.[^.]*$/, "", filename);  # remove the file extension
+            $1 = filename;  # Keep only the filename without extension
             OFS="\t"; print $0;  # Preserve tabs between fields
         }' |
         # Replace all spaces with tabs (in case of some leftover spaces left)
@@ -34,7 +35,6 @@ function prepare_tsv() {
         # Sort by the first column
         sort -t$'\t' -k1,1
     } > "$temp_file"
-
 
     # Add header back and overwrite the original file
     { head -n 1 "$file_path"; cat "$temp_file"; } > "$file_path"
