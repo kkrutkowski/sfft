@@ -43,10 +43,10 @@ const std::string files_location = argv[3];
 std::string argv1 = argv[1];
 std::string argv2 = argv[2];
 
-uint method = 0;
-uint algorithm = 1;
+uint method = 5;
+uint algorithm = 2;
 
-if (argv1 == "0" || argv1 == "slow"){method = 0; argv1 = "slow";}
+if (argv1 == "0" || argv1 == "naive" || argv1 == "slow"){method = 0; argv1 = "naive";}
 else if (argv1 == "1" || argv1 == "direct" || argv1 == "simd" || argv1 == "fma"){method = 1; argv1 = "fma";}
 else if (argv1 == "2" || argv1 == "rec" || argv1 == "recursive"){method = 2; argv1 = "recursive";}
 else if (argv1 == "3" || argv1 == "fft"|| argv1 == "sfft" || argv1 == "sparse"){method = 3; argv1 = "sfft";}
@@ -95,12 +95,35 @@ std::thread printThread;
         printProgress(file_count, startTime);
     });
 
-std::filesystem::path path = std::filesystem::path(files_location).parent_path(); std::string output_path = path.string() + "/rayleigh_output.tsv";
+std::filesystem::path path = std::filesystem::path(files_location).parent_path();
+
+std::string output_path = path.string() + "/";
+switch (method) {
+    case 0:
+        output_path += "naive"; break;
+    case 1:
+        output_path += "fma"; break;
+    case 2:
+        output_path += "recursive"; break;
+    case 3:
+        output_path += "sfft"; break;
+    case 4:
+        output_path += "fasper"; break;
+
+    default: std::cout << "Invalid method selected" << std::endl; break;
+}
+
+if (algorithm == 0) {output_path += "_rz_output.tsv";}
+else if (algorithm == 1) {output_path += "_gls_output.tsv";}
+else {std::cout << "Invalid algorithm selected" << std::endl;}
+
+std::cout << "Output file path: " << output_path << std::endl;
+
 std::ofstream output_file(output_path);
  output_file.close(); //creates and closes output file
 
 std::ofstream out(output_path);
-out << "file	frequency	period	amplitude	power" << std::endl;
+out << "file	frequency	period	power" << std::endl;
 
 FFT fft;
 fft.init(grid.size);
@@ -111,7 +134,7 @@ for (unsigned int i = 0; i < file_count; i++) {
 
         #pragma omp critical
         {// Enter critical section to write to the file
-            out << files[i] << "\t" << std::fixed << std::setprecision(6) << frequency << "\t" << std::fixed << std::setprecision(4) << 1/frequency << "\t" << std::fixed << std::setprecision(3) << amplitude << "\t" << std::fixed << std::setprecision(3) << max_power << "\n";
+            out << files[i] << "\t" << std::fixed << std::setprecision(6) << frequency << "\t" << std::fixed << std::setprecision(4) << 1/frequency << "\t" << std::fixed << std::setprecision(3) << max_power << "\n";
         };
 
 #pragma omp critical

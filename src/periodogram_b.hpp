@@ -26,20 +26,22 @@ std::tuple<float, float, float> periodogram(FFTGrid &grid, std::filesystem::path
 	//std::cout << method  << "\t" << algorithm << std::endl;
 
 	if(algorithm == 0){
-		if (method == 0){best_frequency = rayleigh_slow_b(data, grid, fft);}
-		else if (method == 1){best_frequency = rayleigh_simd_b(data, grid, fft);}
-		else if (method == 2){best_frequency = rayleigh_rec_b(data, grid, fft);}
-		else if (method == 3){best_frequency = rayleigh_fft_b(data, grid, fft);}
-		else if (method == 4){best_frequency = rayleigh_fasper_b(data, grid, fft);}
-		else {std::cout << "Invalid method selected" << std::endl;}
+		switch (method) {
+			case 0: best_frequency = rayleigh_slow_b(data, grid, fft); break;
+			case 1: best_frequency = rayleigh_simd_b(data, grid, fft); break;
+			case 2: best_frequency = rayleigh_rec_b(data, grid, fft); break;
+			case 3: best_frequency = rayleigh_fft_b(data, grid, fft); break;
+			case 4: best_frequency = rayleigh_fasper_b(data, grid, fft); break;
+		}
 	}
-	else {
-		if (method == 0){best_frequency = gls_slow_b(data, grid, fft);}
-		else if (method == 1){best_frequency = gls_simd_b(data, grid, fft);}
-		else if (method == 2){best_frequency = gls_rec_b(data, grid, fft);}
-		else if (method == 3){best_frequency = gls_fft_b(data, grid, fft);}
-		else if (method == 4){best_frequency = gls_fasper_b(data, grid, fft);}
-		else {std::cout << "Invalid method selected" << std::endl;}
+	else if (algorithm == 1) {
+		switch (method) {
+			case 0: best_frequency = gls_slow_b(data, grid, fft); break;
+			case 1: best_frequency = gls_simd_b(data, grid, fft); break;
+			case 2: best_frequency = gls_rec_b(data, grid, fft); break;
+			case 3: best_frequency = gls_fft_b(data, grid, fft); break;
+			case 4: best_frequency = gls_fasper_b(data, grid, fft); break;
+		}
 	}
 
 	float powers_average = best_frequency.sum_of_powers / double(grid.freq.size()); //calculates average power for the input data
