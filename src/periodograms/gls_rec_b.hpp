@@ -5,8 +5,7 @@
 #include "../utils/vertex.hpp"
 #include "../utils/fftgrid.hpp"
 #include "../utils/readout.hpp"
-#include "../../include/mintrig.hpp"
-//#include "utils/convolution.hpp"
+#include "../../include/fma_trig.hpp"
 
 output_data gls_rec_b(const star &data, const FFTGrid &grid, FFT &fft) {
         output_data best_frequency;
@@ -107,7 +106,8 @@ output_data gls_rec_b(const star &data, const FFTGrid &grid, FFT &fft) {
 
       if (k % 64 == 1){
          for (i=0; i<n_iter; i++){
-            FTA::sincos_ps( _mm256_mul_ps(t_simd[i], _mm256_mul_ps(_mm256_set1_ps(grid.freq[k]), _mm256_set1_ps(twopi))), &sinx_simd[i], &cosx_simd[i]);
+            //FTA::sincos_ps( _mm256_mul_ps(t_simd[i], _mm256_mul_ps(_mm256_set1_ps(grid.freq[k]), _mm256_set1_ps(twopi))), &sinx_simd[i], &cosx_simd[i]);
+            FTA::sincos_2pi_ps(_mm256_mul_ps(t_simd[i], _mm256_set1_ps(grid.freq[k])), &sinx_simd[i], &cosx_simd[i]);
          }
       };
 
@@ -136,7 +136,6 @@ output_data gls_rec_b(const star &data, const FFTGrid &grid, FFT &fft) {
          for (i=0; i<n_iter; i++){
             //tmp = cosx_simd[i] * cosdx_simd[i] - sinx_simd[i] * sindx_simd[i];
             tmp = _mm256_fmsub_ps(cosx_simd[i], cosdx_simd[i], _mm256_mul_ps(sinx_simd[i], sindx_simd[i]));
-            //sinx_simd[i] = cosx_simd[i] * sindx_simd[i] + sinx_simd[i] * cosdx_simd[i];
             sinx_simd[i] = _mm256_fmadd_ps(cosx_simd[i], sindx_simd[i], _mm256_mul_ps(sinx_simd[i], cosdx_simd[i]));
             cosx_simd[i] = tmp;
          }

@@ -5,8 +5,7 @@
 #include "../utils/vertex.hpp"
 #include "../utils/fftgrid.hpp"
 #include "../utils/readout.hpp"
-#include "../../include/mintrig.hpp"
-//#include "utils/convolution.hpp"
+#include "../../include/fma_trig.hpp"
 
 output_data gls_simd_b(const star &data, const FFTGrid &grid, FFT &fft) {
         output_data best_frequency;
@@ -87,7 +86,8 @@ output_data gls_simd_b(const star &data, const FFTGrid &grid, FFT &fft) {
 
 
       for (i=0; i<n_iter; i++){
-         FTA::sincos_ps( _mm256_mul_ps(t_simd[i], _mm256_mul_ps(_mm256_set1_ps(grid.freq[k]), _mm256_set1_ps(twopi))), &S_temp, &C_temp);
+         //FTA::sincos_ps( _mm256_mul_ps(t_simd[i], _mm256_mul_ps(_mm256_set1_ps(grid.freq[k]), _mm256_set1_ps(twopi))), &S_temp, &C_temp);
+         FTA::sincos_2pi_ps( _mm256_mul_ps(t_simd[i], _mm256_set1_ps(grid.freq[k])), &S_temp, &C_temp);
          YC_simd = _mm256_fmadd_ps(wy_simd[i], C_temp, YC_simd);
          YS_simd = _mm256_fmadd_ps(wy_simd[i], S_temp, YS_simd);
 
