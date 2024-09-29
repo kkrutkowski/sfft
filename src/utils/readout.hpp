@@ -45,6 +45,7 @@ struct star {
     }
     */
 
+
     inline void read(const std::string& in_file) {
         std::ifstream input_file(in_file);
 
@@ -134,8 +135,45 @@ struct star {
     inline void serialize(Archive& ar) {
     ar & id & x & y & dy;
     }
-};
 
+
+
+inline void linreg() {
+    double tmp = 0;
+
+    // Center the measurement times - increases precision of future computation
+    for (unsigned int i = 0; i < x.size(); i++) {
+        tmp += x[i];
+    }
+    tmp /= double(x.size());
+    for (unsigned int i = 0; i < x.size(); i++) {
+        x[i] -= tmp;
+    }
+
+    // Initialize sums for weighted regression
+    double sumx = 0, sumxsq = 0, sumy = 0, sumxy = 0, sumw = 0; // Add sum of weights
+    double lin = 0, c = 0, w;
+
+    for (unsigned int i = 0; i < x.size(); i++) {
+        w = 1 / (dy[i] * dy[i]); // weight as the inverse of variance
+        sumw += w;               // accumulate total weights
+        sumx += x[i] * w;       // weighted sum of x
+        sumxsq += x[i] * x[i] * w; // weighted sum of x^2
+        sumy += y[i] * w;       // weighted sum of y
+        sumxy += (x[i] * y[i]) * w; // weighted sum of x*y
+    }
+
+    // Calculate the denominator for the slope and intercept
+    double denum = sumw * sumxsq - (sumx * sumx);
+
+    // Calculate slope (lin) and intercept (c)
+    lin = (sumw * sumxy - sumx * sumy) / denum;
+    c = (sumy * sumxsq - sumx * sumxy) / denum;
+
+    // Adjust the y values based on the regression line
+    for (unsigned int i = 0; i < y.size(); i++) {y[i] -= (lin * x[i]) + c;}
+    }
+};
 
 
 
