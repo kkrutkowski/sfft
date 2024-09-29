@@ -164,11 +164,11 @@ inline void linreg() {
     }
 
     // Calculate the denominator for the slope and intercept
-    double denum = sumw * sumxsq - (sumx * sumx);
+    double denum = (sumw * sumxsq) - (sumx * sumx);
 
     // Calculate slope (lin) and intercept (c)
-    lin = (sumw * sumxy - sumx * sumy) / denum;
-    c = (sumy * sumxsq - sumx * sumxy) / denum;
+    lin = ((sumw * sumxy) - (sumx * sumy)) / denum;
+    c = ((sumy * sumxsq) - (sumx * sumxy)) / denum;
 
     // Adjust the y values based on the regression line
     for (unsigned int i = 0; i < y.size(); i++) {y[i] -= (lin * x[i]) + c;}
