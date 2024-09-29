@@ -156,11 +156,14 @@ inline void linreg() {
 
     for (unsigned int i = 0; i < x.size(); i++) {
         w = 1 / (dy[i] * dy[i]); // weight as the inverse of variance
-        sumw += w;               // accumulate total weights
-        sumx += x[i] * w;       // weighted sum of x
-        sumxsq += x[i] * x[i] * w; // weighted sum of x^2
-        sumy += y[i] * w;       // weighted sum of y
-        sumxy += (x[i] * y[i]) * w; // weighted sum of x*y
+        if (std::isnormal(w) && w > 0){
+            sumw += w;               // accumulate total weights
+            sumx += x[i] * w;       // weighted sum of x
+            sumxsq += x[i] * x[i] * w; // weighted sum of x^2
+            sumy += y[i] * w;       // weighted sum of y
+            sumxy += (x[i] * y[i]) * w; // weighted sum of x*y
+        }
+        else {dy[i] = 999.9;}
     }
 
     // Calculate the denominator for the slope and intercept
