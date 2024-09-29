@@ -22,6 +22,7 @@
 std::tuple<float, float, float> periodogram(FFTGrid &grid, std::filesystem::path in_file, FFT &fft,uint algorithm, uint method){
 
 	star data; data.read(in_file);
+	// data.linreg();  //Uncomment to enable non-destructive preprocessing
 	output_data best_frequency;
 	//std::cout << method  << "\t" << algorithm << std::endl;
 
